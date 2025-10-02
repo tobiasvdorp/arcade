@@ -118,6 +118,10 @@
   ::selection {
     background: hsl(var(--primary) / 0.18);
   }
+
+  .container {
+    @apply mx-auto;
+  }
 }
 
 @layer utilities {

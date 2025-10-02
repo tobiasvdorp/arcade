@@ -19,10 +19,7 @@ export function AppShell({ children }: AppShellProps) {
         role="banner"
         className="sticky top-0 z-40 bg-background/70 glass"
       >
-        <div className="container flex items-center justify-between py-3">
-          <Navbar />
-          <ThemeToggle />
-        </div>
+        <Navbar />
       </header>
       <main role="main" id="main-content" className="container py-6">
         <AnimatePresence mode="wait" initial={false}>

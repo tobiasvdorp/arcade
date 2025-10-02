@@ -30,6 +30,7 @@ import Link from "next/link";
 import { SignInButton, SignOutButton, SignUpButton } from "@clerk/nextjs";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { UserButton } from "@clerk/nextjs";
+import { ThemeToggle } from "./theme-toggle";
 
 interface MenuItem {
   title: string;
@@ -65,10 +66,10 @@ type NavbarProps = {
 
 export const Navbar = ({
   logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://www.shadcnblocks.com/images/block/block-1.svg",
+    url: "/",
+    src: "/",
     alt: "logo",
-    title: "Shadcnblocks.com",
+    title: "Mini Game Arcade",
   },
   menu = [
     { title: "Home", url: "/" },
@@ -133,11 +134,11 @@ export const Navbar = ({
     //   ],
     // },
     {
-      title: "Pricing",
+      title: "Leaderboards",
       url: "#",
     },
     {
-      title: "Blog",
+      title: "Profile",
       url: "#",
     },
   ],
@@ -150,7 +151,7 @@ export const Navbar = ({
 }: NavbarProps) => {
   return (
     <header className="py-4">
-      <div className="container mx-auto">
+      <div className="container">
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
             <Link href={logo.url} className="flex items-center gap-2">
@@ -180,6 +181,7 @@ export const Navbar = ({
                 <SignOutButton />
               </Button>
             </Authenticated>
+            <ThemeToggle />
           </div>
         </nav>
         <div className="block lg:hidden">
@@ -253,6 +255,7 @@ export const Navbar = ({
                         <SignOutButton />
                       </Button>
                     </Authenticated>
+                    <ThemeToggle />
                   </div>
                 </div>
               </SheetContent>

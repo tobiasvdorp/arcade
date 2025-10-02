@@ -1,25 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+// @ts-expect-error no declaration file
 import confetti from "canvas-confetti";
 import { GameLayout } from "@/components/game/GameLayout";
 import { ScoreBoard } from "@/components/game/ScoreBoard";
 import { KeyLegend } from "@/components/game/KeyLegend";
-
-type Cell = "X" | "O" | null;
+import { useMutation, useQuery } from "convex/react";
+import { useAuth } from "@clerk/nextjs";
+import { api } from "@/convex/_generated/api";
+import type { Cell } from "@/convex/functions/games/ticTacToe";
+import { calculateWinner } from "@/convex/functions/games/ticTacToe";
 
 export const TicTacToe = () => {
-  const [board, setBoard] = useState<Cell[]>(Array(9).fill(null));
-  const [xIsNext, setXIsNext] = useState(true);
+  const { isSignedIn } = useAuth();
+  const ttt = api.functions.games.ticTacToe;
+  const game = useQuery(ttt.getMyGame, {});
+  const createGame = useMutation(ttt.getOrCreateGame);
+  const makeMove = useMutation(ttt.makeMove);
+  const resetGame = useMutation(ttt.resetGame);
 
-  const handleClick = (idx: number) => {
-    if (board[idx] || calculateWinner(board)) return;
-    const next = board.slice();
-    next[idx] = xIsNext ? "X" : "O";
-    setBoard(next);
-    setXIsNext(!xIsNext);
-  };
+  useEffect(() => {
+    if (!isSignedIn) return;
+    if (game === null) {
+      void createGame({});
+    }
+  }, [game, isSignedIn, createGame]);
 
+  const board: Cell[] = (game?.gameData.board ?? Array(9).fill("")).map(
+    (c: string) => (c === "" ? null : (c as Cell)),
+  );
+  const xIsNext = (game?.gameData.turn ?? "X") === "X";
   const winner = calculateWinner(board);
 
   useEffect(() => {
@@ -48,6 +59,27 @@ export const TicTacToe = () => {
     </div>
   );
 
+  if (game === undefined) {
+    return (
+      <GameLayout header={header}>
+        <div>loadng</div>
+      </GameLayout>
+    );
+  }
+
+  if (!isSignedIn) {
+    return (
+      <GameLayout header={header}>
+        <div className="text-center py-10">Log in om te spelen.</div>
+      </GameLayout>
+    );
+  }
+
+  const handleClick = (idx: number) => {
+    if (board[idx] || winner) return;
+    void makeMove({ index: idx });
+  };
+
   return (
     <GameLayout header={header}>
       <div
@@ -73,10 +105,7 @@ export const TicTacToe = () => {
       <div className="mt-4 flex gap-2">
         <button
           className="rounded-2xl px-4 py-2 bg-primary text-primary-foreground"
-          onClick={() => {
-            setBoard(Array(9).fill(null));
-            setXIsNext(true);
-          }}
+          onClick={() => void resetGame({})}
         >
           Reset
         </button>
@@ -84,22 +113,3 @@ export const TicTacToe = () => {
     </GameLayout>
   );
 };
-
-function calculateWinner(squares: Cell[]): Cell {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (const [a, b, c] of lines) {
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
-}
