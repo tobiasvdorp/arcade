@@ -2,7 +2,6 @@
 
 import { ReactNode } from "react";
 import { Navbar } from "@/components/ui/navbar";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 

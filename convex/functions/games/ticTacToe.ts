@@ -6,61 +6,45 @@ import {
   type MutationCtx,
 } from "../../_generated/server";
 import type { Id } from "../../_generated/dataModel";
+import type { Cell } from "../../shared/ticTacToe";
+import { calculateWinner } from "../../shared/ticTacToe";
 
-export type Cell = "X" | "O" | null;
-
-export function calculateWinner(squares: ("X" | "O" | null)[]): Cell {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (const [a, b, c] of lines) {
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
-}
-
-async function getUserIdReadOnly(
+async function getUserId(
   ctx: QueryCtx | MutationCtx,
 ): Promise<Id<"users"> | null> {
   const identity = await ctx.auth.getUserIdentity();
   if (!identity) return null;
+
   const existing = await ctx.db
     .query("users")
     .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.subject))
     .first();
+
   return existing?._id ?? null;
 }
 
-async function ensureUserId(ctx: MutationCtx): Promise<Id<"users"> | null> {
+async function ensureUserId(ctx: MutationCtx): Promise<Id<"users">> {
   const identity = await ctx.auth.getUserIdentity();
-  if (!identity) throw new Error("Not authenticated");
+  if (!identity) throw new Error("Not authenticated via Clerk");
 
   const existing = await ctx.db
     .query("users")
     .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.subject))
     .first();
+
   if (existing) return existing._id;
-  return null;
-  // return await ctx.db.insert("users", {
-  //   id: identity.subject,
-  //   email: identity.email ?? "",
-  //   name: identity.name ?? "",
-  // });
+
+  // Create user if authenticated in Clerk but not in Convex
+  return await ctx.db.insert("users", {
+    name: identity.name ?? "",
+    tokenIdentifier: identity.subject,
+  });
 }
 
 export const getMyGame = query({
   args: {},
   handler: async (ctx) => {
-    const userId = await getUserIdReadOnly(ctx);
+    const userId = await getUserId(ctx);
     if (!userId) return null;
     const game = await ctx.db
       .query("ticTacToeGames")
@@ -74,7 +58,6 @@ export const getOrCreateGame = mutation({
   args: {},
   handler: async (ctx) => {
     const userId = await ensureUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
 
     const current = await ctx.db
       .query("ticTacToeGames")
@@ -99,7 +82,6 @@ export const makeMove = mutation({
     if (index < 0 || index > 8) throw new Error("Invalid move index");
 
     const userId = await ensureUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
 
     const game = await ctx.db
       .query("ticTacToeGames")
@@ -132,7 +114,6 @@ export const resetGame = mutation({
   args: {},
   handler: async (ctx) => {
     const userId = await ensureUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
 
     const game = await ctx.db
       .query("ticTacToeGames")

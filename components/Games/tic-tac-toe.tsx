@@ -9,8 +9,8 @@ import { KeyLegend } from "@/components/game/KeyLegend";
 import { useMutation, useQuery } from "convex/react";
 import { useAuth } from "@clerk/nextjs";
 import { api } from "@/convex/_generated/api";
-import type { Cell } from "@/convex/functions/games/ticTacToe";
-import { calculateWinner } from "@/convex/functions/games/ticTacToe";
+import { type Cell, calculateWinner } from "@/convex/shared/ticTacToe";
+import { LoaderCircle } from "lucide-react";
 
 export const TicTacToe = () => {
   const { isSignedIn } = useAuth();
@@ -59,18 +59,10 @@ export const TicTacToe = () => {
     </div>
   );
 
-  if (game === undefined) {
-    return (
-      <GameLayout header={header}>
-        <div>loadng</div>
-      </GameLayout>
-    );
-  }
-
   if (!isSignedIn) {
     return (
       <GameLayout header={header}>
-        <div className="text-center py-10">Log in om te spelen.</div>
+        <div className="text-center py-10">Log in to play.</div>
       </GameLayout>
     );
   }
@@ -87,25 +79,34 @@ export const TicTacToe = () => {
         aria-label="Tic Tac Toe board"
         className="grid grid-cols-3 gap-2 max-w-xl mx-auto"
       >
-        {board.map((cell, i) => (
-          <button
-            key={i}
-            role="gridcell"
-            aria-label={`Vak ${i + 1}${cell ? `, ${cell}` : ""}`}
-            onClick={() => handleClick(i)}
-            className="aspect-square rounded-2xl glass shadow-soft text-2xl font-bold hover:glow transition-[transform,box-shadow] duration-200 ease-out hover:scale-[1.02]"
-          >
-            {cell}
-          </button>
-        ))}
+        {!game ? (
+          <div className="col-span-3 row-span-3 aspect-square rounded-2xl glass shadow-soft text-2xl flex flex-col items-center justify-center gap-2">
+            <LoaderCircle className="size-12 animate-spin" />
+          </div>
+        ) : (
+          board.map((cell, i) => (
+            <button
+              key={i}
+              role="gridcell"
+              aria-label={`Cell ${i + 1}${cell ? `, ${cell}` : ""}`}
+              onClick={() => handleClick(i)}
+              disabled={Boolean(winner)}
+              className={
+                "aspect-square rounded-2xl glass shadow-soft text-2xl font-bold hover:glow transition-all duration-200 ease-out hover:scale-[1.02] hover:border-accent"
+              }
+            >
+              {cell}
+            </button>
+          ))
+        )}
       </div>
       <p aria-live="polite" className="sr-only">
-        {winner ? `Winnaar: ${winner}` : `Beurt: ${xIsNext ? "X" : "O"}`}
+        {winner ? `Winner: ${winner}` : `Turn: ${xIsNext ? "X" : "O"}`}
       </p>
       <div className="mt-4 flex gap-2">
         <button
           className="rounded-2xl px-4 py-2 bg-primary text-primary-foreground"
-          onClick={() => void resetGame({})}
+          onClick={() => resetGame()}
         >
           Reset
         </button>

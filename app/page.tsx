@@ -16,8 +16,8 @@ export default function Home() {
             Mini Game Arcade
           </h1>
           <p className="mt-4 text-lg text-muted-foreground max-w-prose">
-            Speels, modern en toegankelijk. Speel Snake, Tetris en Memory met
-            neon glow accenten en glas UI.
+            Playful, modern and accessible. Play Snake, Tetris and Memory with
+            neon glow accents and glass UI.
           </p>
           <div className="mt-8 flex gap-3">
             <Link
@@ -48,18 +48,18 @@ export default function Home() {
           <GameCard
             href="/games/tic-tac-toe"
             title="Tic Tac Toe"
-            description="Klassieker. 3 op een rij."
+            description="Classic. Three in a row."
             difficulty="Easy"
           />
           <GameCard
             title="Snake"
-            description="Binnenkort beschikbaar."
+            description="Coming soon."
             difficulty="Medium"
             disabled
           />
           <GameCard
             title="Tetris"
-            description="Binnenkort beschikbaar."
+            description="Coming soon."
             difficulty="Hard"
             disabled
           />

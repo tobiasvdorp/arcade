@@ -5,35 +5,35 @@ const GAMES = [
   {
     slug: "/games/tic-tac-toe",
     title: "Tic Tac Toe",
-    desc: "3 op een rij.",
+    desc: "Three in a row.",
     diff: "Easy" as const,
     available: true,
   },
   {
     slug: "#",
     title: "Snake",
-    desc: "Binnenkort beschikbaar.",
+    desc: "Coming soon.",
     diff: "Medium" as const,
     available: false,
   },
   {
     slug: "#",
     title: "Tetris",
-    desc: "Binnenkort beschikbaar.",
+    desc: "Coming soon.",
     diff: "Hard" as const,
     available: false,
   },
   {
     slug: "#",
     title: "Memory",
-    desc: "Binnenkort beschikbaar.",
+    desc: "Coming soon.",
     diff: "Medium" as const,
     available: false,
   },
   {
     slug: "#",
     title: "Pong",
-    desc: "Binnenkort beschikbaar.",
+    desc: "Coming soon.",
     diff: "Medium" as const,
     available: false,
   },
@@ -48,7 +48,7 @@ export default function GamesPage() {
             Games
           </h1>
           <p className="text-sm text-muted-foreground">
-            Kies je spel en ga los.
+            Choose your game and start playing.
           </p>
         </div>
         <div
@@ -88,13 +88,13 @@ export default function GamesPage() {
       </div>
 
       <div className="mt-8 text-sm text-muted-foreground">
-        <span>Of ga direct naar </span>
+        <span>Or go directly to </span>
         <Link href="/leaderboards" className="underline underline-offset-4">
           Leaderboards
         </Link>
         <span> of </span>
         <Link href="/profile" className="underline underline-offset-4">
-          Profiel
+          Profile
         </Link>
         <span>.</span>
       </div>

@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as functions_games_ticTacToe from "../functions/games/ticTacToe.js";
+import type * as shared_ticTacToe from "../shared/ticTacToe.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -25,6 +26,7 @@ import type * as functions_games_ticTacToe from "../functions/games/ticTacToe.js
  */
 declare const fullApi: ApiFromModules<{
   "functions/games/ticTacToe": typeof functions_games_ticTacToe;
+  "shared/ticTacToe": typeof shared_ticTacToe;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
