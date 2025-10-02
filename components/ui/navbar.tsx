@@ -71,10 +71,10 @@ export const Navbar = ({
     title: "Shadcnblocks.com",
   },
   menu = [
-    { title: "Home", url: "#" },
+    { title: "Home", url: "/" },
     {
       title: "Games",
-      url: "#",
+      url: "/games",
       items: [
         {
           title: "Tic Tac Toe",
@@ -86,19 +86,19 @@ export const Navbar = ({
           title: "Snake",
           description: "Play Snake",
           icon: <Trees className="size-5 shrink-0" />,
-          url: "#",
+          url: "/games/snake",
         },
         {
           title: "Pong",
           description: "Play Pong",
           icon: <Sunset className="size-5 shrink-0" />,
-          url: "#",
+          url: "/games/pong",
         },
         {
           title: "Tetris",
           description: "Play Tetris",
           icon: <Zap className="size-5 shrink-0" />,
-          url: "#",
+          url: "/games/tetris",
         },
       ],
     },

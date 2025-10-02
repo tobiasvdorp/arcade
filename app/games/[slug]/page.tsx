@@ -1,11 +1,14 @@
+import { TicTacToe } from "@/components/Games/tic-tac-toe";
+
 type GamePageProps = {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 };
 
-export const GamePage = async ({ params }: GamePageProps) => {
-  const awaitedParams = await params;
-
-  return <div>GamePage {awaitedParams?.slug}</div>;
-};
-
-export default GamePage;
+export default function GamePage({ params }: GamePageProps) {
+  switch (params.slug) {
+    case "tic-tac-toe":
+      return <TicTacToe />;
+    default:
+      return <div className="container py-8">GamePage {params?.slug}</div>;
+  }
+}

@@ -1,3 +1,46 @@
+# Mini Game Arcade – Design System & Pages
+
+This project implements a modern, playful "Mini Game Arcade" with retro neon accents and clean glasmorphism, built with Next.js App Router, TypeScript, Tailwind v4 design tokens, shadcn/ui (Radix), framer-motion, and accessible WCAG AA patterns.
+
+## Styleguide (Tokens)
+
+- Colors: electric blue (primary), neon purple (accent), accent yellow, neutral grays
+- Shapes: rounded-2xl (`--radius: 1rem`), glass backgrounds, layered shadows
+- Motion: 150–220ms route fades/slides; hover scale 1.02; respects reduced motion
+- Focus: visible focus with outline and offset; not color-only
+
+See `app/globals.css` for tokens: `--primary`, `--accent`, `--accent-2`, `--glass-*`, shadows, motion, and dark mode parity.
+
+## Components
+
+- AppShell (`components/AppShell.tsx`): semantic header/main/footer, route transitions
+- ThemeProvider/ThemeToggle (`components/ui`) with `next-themes`
+- NeoArcadeDock (`components/NeoArcadeDock.tsx`): bottom dock with Radix Tabs
+- GameCard (`components/GameCard.tsx`): arcade grid cards with difficulty badges
+- GameLayout/ScoreBoard/KeyLegend (`components/game/*`): accessible game wrapper
+- A11y utilities: FocusRing, EmptyState, Skeleton, AchievementBadge
+- Leaderboards: virtualized list with Radix Tabs
+- Pages: `/leaderboards`, `/profile`, `/settings`, `/games/[slug]`
+
+## Accessibility
+
+- Landmarks: header/nav/main/footer; headings hierarchy
+- Focus-visible outlines with offset; keyboard and touch support
+- `aria-live` for game status; alt text; reduced-motion toggle in Settings
+- Layout tested to 200% zoom
+
+## Animations
+
+- Route transitions via framer-motion (`AppShell`)
+- Hover glow pulse and layered shadows
+- Confetti on achievements/wins (disabled with reduced motion)
+
+## Development
+
+pnpm dev
+
+Then open `http://localhost:3000`. Auth is managed by Clerk (unchanged).
+
 # Welcome to your Convex + Next.js + Clerk app
 
 This is a [Convex](https://convex.dev/) project created with [`npm create convex`](https://www.npmjs.com/package/create-convex).
