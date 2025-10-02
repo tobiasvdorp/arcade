@@ -1,5 +1,7 @@
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
 
+import { JSX } from "react";
+
 import {
   Accordion,
   AccordionContent,
@@ -31,7 +33,7 @@ interface MenuItem {
   items?: MenuItem[];
 }
 
-interface Navbar1Props {
+type NavbarProps = {
   logo?: {
     url: string;
     src: string;
@@ -53,9 +55,9 @@ interface Navbar1Props {
       url: string;
     };
   };
-}
+};
 
-const Navbar1 = ({
+export const Navbar = ({
   logo = {
     url: "https://www.shadcnblocks.com",
     src: "https://www.shadcnblocks.com/images/block/block-1.svg",
@@ -65,7 +67,7 @@ const Navbar1 = ({
   menu = [
     { title: "Home", url: "#" },
     {
-      title: "Products",
+      title: "Games",
       url: "#",
       items: [
         {
@@ -95,36 +97,36 @@ const Navbar1 = ({
         },
       ],
     },
-    {
-      title: "Resources",
-      url: "#",
-      items: [
-        {
-          title: "Help Center",
-          description: "Get all the answers you need right here",
-          icon: <Zap className="size-5 shrink-0" />,
-          url: "#",
-        },
-        {
-          title: "Contact Us",
-          description: "We are here to help you with any questions you have",
-          icon: <Sunset className="size-5 shrink-0" />,
-          url: "#",
-        },
-        {
-          title: "Status",
-          description: "Check the current status of our services and APIs",
-          icon: <Trees className="size-5 shrink-0" />,
-          url: "#",
-        },
-        {
-          title: "Terms of Service",
-          description: "Our terms and conditions for using our services",
-          icon: <Book className="size-5 shrink-0" />,
-          url: "#",
-        },
-      ],
-    },
+    // {
+    //   title: "Resources",
+    //   url: "#",
+    //   items: [
+    //     {
+    //       title: "Help Center",
+    //       description: "Get all the answers you need right here",
+    //       icon: <Zap className="size-5 shrink-0" />,
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Contact Us",
+    //       description: "We are here to help you with any questions you have",
+    //       icon: <Sunset className="size-5 shrink-0" />,
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Status",
+    //       description: "Check the current status of our services and APIs",
+    //       icon: <Trees className="size-5 shrink-0" />,
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "Terms of Service",
+    //       description: "Our terms and conditions for using our services",
+    //       icon: <Book className="size-5 shrink-0" />,
+    //       url: "#",
+    //     },
+    //   ],
+    // },
     {
       title: "Pricing",
       url: "#",
@@ -144,10 +146,10 @@ const Navbar1 = ({
     login: { text: "Log in", url: "#" },
     signup: { text: "Sign up", url: "#" },
   },
-}: Navbar1Props) => {
+}: NavbarProps) => {
   return (
-    <section className="py-4">
-      <div className="container">
+    <header className="py-4">
+      <div className="container mx-auto">
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
             <a href={logo.url} className="flex items-center gap-2">
@@ -229,16 +231,16 @@ const Navbar1 = ({
           </div>
         </div>
       </div>
-    </section>
+    </header>
   );
 };
 
 const renderMenuItem = (item: MenuItem) => {
   if (item.items) {
     return (
-      <NavigationMenuItem key={item.title} className="text-muted-foreground">
+      <NavigationMenuItem key={item.title}>
         <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-        <NavigationMenuContent>
+        <NavigationMenuContent className="bg-background">
           <ul className="w-80 p-3">
             <NavigationMenuLink>
               {item.items.map((subItem) => (
@@ -315,5 +317,3 @@ const renderMobileMenuItem = (item: MenuItem) => {
     </a>
   );
 };
-
-export { Navbar1 };
