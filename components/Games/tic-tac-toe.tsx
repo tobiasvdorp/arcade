@@ -11,7 +11,6 @@ import { useAuth, useClerk } from "@clerk/nextjs";
 import { api } from "@/convex/_generated/api";
 import { type Cell, calculateWinner } from "@/convex/shared/ticTacToe";
 import { LoaderCircle } from "lucide-react";
-import { useGuestName } from "@/lib/stores/useGuestName";
 
 export const TicTacToe = () => {
   const { isSignedIn } = useAuth();
@@ -22,7 +21,6 @@ export const TicTacToe = () => {
   const makeMove = useMutation(ttt.makeMove);
   const resetGame = useMutation(ttt.resetGame);
   const saveGameState = useMutation(ttt.saveGameState);
-  const { name: guestName, setName: setGuestName } = useGuestName();
 
   // Guest play state (for unauthenticated users)
   const [guestBoard, setGuestBoard] = useState<Cell[]>(
