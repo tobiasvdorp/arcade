@@ -1,3 +1,5 @@
+"use client";
+
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
 
 import { JSX } from "react";
@@ -25,6 +27,9 @@ import {
 } from "@/components/ui/sheet";
 import Image from "next/image";
 import Link from "next/link";
+import { SignInButton, SignOutButton, SignUpButton } from "@clerk/nextjs";
+import { Authenticated, Unauthenticated } from "convex/react";
+import { UserButton } from "@clerk/nextjs";
 
 interface MenuItem {
   title: string;
@@ -46,16 +51,16 @@ type NavbarProps = {
     name: string;
     url: string;
   }[];
-  auth?: {
-    login: {
-      text: string;
-      url: string;
-    };
-    signup: {
-      text: string;
-      url: string;
-    };
-  };
+  // auth?: {
+  //   login: {
+  //     text: string;
+  //     url: string;
+  //   };
+  //   signup: {
+  //     text: string;
+  //     url: string;
+  //   };
+  // };
 };
 
 export const Navbar = ({
@@ -98,36 +103,36 @@ export const Navbar = ({
         },
       ],
     },
-    // {
-    //   title: "Resources",
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Help Center",
-    //       description: "Get all the answers you need right here",
-    //       icon: <Zap className="size-5 shrink-0" />,
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Contact Us",
-    //       description: "We are here to help you with any questions you have",
-    //       icon: <Sunset className="size-5 shrink-0" />,
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Status",
-    //       description: "Check the current status of our services and APIs",
-    //       icon: <Trees className="size-5 shrink-0" />,
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Terms of Service",
-    //       description: "Our terms and conditions for using our services",
-    //       icon: <Book className="size-5 shrink-0" />,
-    //       url: "#",
-    //     },
-    //   ],
-    // },
+    {
+      title: "Resources",
+      url: "#",
+      items: [
+        {
+          title: "Help Center",
+          description: "Get all the answers you need right here",
+          icon: <Zap className="size-5 shrink-0" />,
+          url: "#",
+        },
+        {
+          title: "Contact Us",
+          description: "We are here to help you with any questions you have",
+          icon: <Sunset className="size-5 shrink-0" />,
+          url: "#",
+        },
+        {
+          title: "Status",
+          description: "Check the current status of our services and APIs",
+          icon: <Trees className="size-5 shrink-0" />,
+          url: "#",
+        },
+        {
+          title: "Terms of Service",
+          description: "Our terms and conditions for using our services",
+          icon: <Book className="size-5 shrink-0" />,
+          url: "#",
+        },
+      ],
+    },
     {
       title: "Pricing",
       url: "#",
@@ -143,10 +148,6 @@ export const Navbar = ({
     { name: "Imprint", url: "#" },
     { name: "Sitemap", url: "#" },
   ],
-  auth = {
-    login: { text: "Log in", url: "#" },
-    signup: { text: "Sign up", url: "#" },
-  },
 }: NavbarProps) => {
   return (
     <header className="py-4">
@@ -166,12 +167,20 @@ export const Navbar = ({
             </div>
           </div>
           <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link href={auth.login.url}>{auth.login.text}</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href={auth.signup.url}>{auth.signup.text}</Link>
-            </Button>
+            <Unauthenticated>
+              <Button asChild variant="outline">
+                <SignInButton mode="modal" />
+              </Button>
+              <Button asChild>
+                <SignUpButton mode="modal" />
+              </Button>
+            </Unauthenticated>
+            <Authenticated>
+              <UserButton />
+              <Button asChild>
+                <SignOutButton />
+              </Button>
+            </Authenticated>
           </div>
         </nav>
         <div className="block lg:hidden">
@@ -231,12 +240,20 @@ export const Navbar = ({
                     </div>
                   </div>
                   <div className="flex flex-col gap-3">
-                    <Button asChild variant="outline">
-                      <Link href={auth.login.url}>{auth.login.text}</Link>
-                    </Button>
-                    <Button asChild>
-                      <Link href={auth.signup.url}>{auth.signup.text}</Link>
-                    </Button>
+                    <Unauthenticated>
+                      <Button asChild variant="outline">
+                        <SignInButton mode="modal" />
+                      </Button>
+                      <Button asChild>
+                        <SignUpButton mode="modal" />
+                      </Button>
+                    </Unauthenticated>
+                    <Authenticated>
+                      <UserButton />
+                      <Button asChild>
+                        <SignOutButton />
+                      </Button>
+                    </Authenticated>
                   </div>
                 </div>
               </SheetContent>
