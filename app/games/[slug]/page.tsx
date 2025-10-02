@@ -1,6 +1,8 @@
-import { PageProps } from "@/.next/types/app/games/[slug]/page";
+type GamePageProps = {
+  params: Promise<{ slug: string }>;
+};
 
-export const GamePage = async ({ params }: PageProps) => {
+export const GamePage = async ({ params }: GamePageProps) => {
   const awaitedParams = await params;
 
   return <div>GamePage {awaitedParams?.slug}</div>;
