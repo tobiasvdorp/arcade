@@ -135,11 +135,11 @@ export const Navbar = ({
     // },
     {
       title: "Leaderboards",
-      url: "#",
+      url: "/leaderboards",
     },
     {
       title: "Profile",
-      url: "#",
+      url: "/profile",
     },
   ],
   mobileExtraLinks = [
