@@ -1,24 +1,37 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 // @ts-expect-error no declaration file
 import confetti from "canvas-confetti";
 import { GameLayout } from "@/components/game/GameLayout";
 import { ScoreBoard } from "@/components/game/ScoreBoard";
 import { KeyLegend } from "@/components/game/KeyLegend";
 import { useMutation, useQuery } from "convex/react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useClerk } from "@clerk/nextjs";
 import { api } from "@/convex/_generated/api";
 import { type Cell, calculateWinner } from "@/convex/shared/ticTacToe";
 import { LoaderCircle } from "lucide-react";
+import { useGuestName } from "@/lib/stores/useGuestName";
 
 export const TicTacToe = () => {
   const { isSignedIn } = useAuth();
+  const { openSignIn } = useClerk();
   const ttt = api.functions.games.ticTacToe;
   const game = useQuery(ttt.getMyGame, {});
   const createGame = useMutation(ttt.getOrCreateGame);
   const makeMove = useMutation(ttt.makeMove);
   const resetGame = useMutation(ttt.resetGame);
+  const saveGameState = useMutation(ttt.saveGameState);
+  const { name: guestName, setName: setGuestName } = useGuestName();
+
+  // Guest play state (for unauthenticated users)
+  const [guestBoard, setGuestBoard] = useState<Cell[]>(
+    Array(9).fill(null) as Cell[],
+  );
+  const [guestTurn, setGuestTurn] = useState<"X" | "O">("X");
+  const [guestMoves, setGuestMoves] = useState<
+    { index: number; player: "X" | "O" }[]
+  >([]);
 
   useEffect(() => {
     if (!isSignedIn) return;
@@ -27,11 +40,25 @@ export const TicTacToe = () => {
     }
   }, [game, isSignedIn, createGame]);
 
-  const board: Cell[] = (game?.gameData.board ?? Array(9).fill("")).map(
-    (c: string) => (c === "" ? null : (c as Cell)),
-  );
-  const xIsNext = (game?.gameData.turn ?? "X") === "X";
+  // Compute board/turn based on authentication state
+  const board: Cell[] = useMemo(() => {
+    if (isSignedIn) {
+      return (game?.gameData.board ?? Array(9).fill("")).map((c: string) =>
+        c === "" ? null : (c as Cell),
+      );
+    }
+    return guestBoard;
+  }, [isSignedIn, game?.gameData.board, guestBoard]);
+
+  const xIsNext = useMemo(() => {
+    return isSignedIn
+      ? (game?.gameData.turn ?? "X") === "X"
+      : guestTurn === "X";
+  }, [isSignedIn, game?.gameData.turn, guestTurn]);
+
   const winner = calculateWinner(board);
+
+  // Hydration handled by Zustand persist; no manual load needed
 
   useEffect(() => {
     if (!winner) return;
@@ -59,17 +86,53 @@ export const TicTacToe = () => {
     </div>
   );
 
-  if (!isSignedIn) {
-    return (
-      <GameLayout header={header}>
-        <div className="text-center py-10">Log in to play.</div>
-      </GameLayout>
-    );
-  }
-
   const handleClick = (idx: number) => {
     if (board[idx] || winner) return;
-    void makeMove({ index: idx });
+    if (isSignedIn) {
+      void makeMove({ index: idx });
+    } else {
+      const nextPlayer: "X" | "O" = xIsNext ? "X" : "O";
+      const nextBoard = [...guestBoard];
+      nextBoard[idx] = nextPlayer;
+      setGuestBoard(nextBoard);
+      setGuestTurn(nextPlayer === "X" ? "O" : "X");
+      setGuestMoves([...guestMoves, { index: idx, player: nextPlayer }]);
+    }
+  };
+
+  // When user signs in, if there is a guest game, persist it to Convex
+  useEffect(() => {
+    const persistIfNeeded = async () => {
+      if (!isSignedIn) return;
+      const raw = localStorage.getItem("ttt:guestGame");
+      if (!raw) return;
+      try {
+        const data = JSON.parse(raw) as {
+          board: Cell[];
+          turn: "X" | "O";
+          moves: { index: number; player: "X" | "O" }[];
+        };
+        await saveGameState({
+          board: data.board,
+          turn: data.turn,
+          moves: data.moves,
+        });
+      } finally {
+        localStorage.removeItem("ttt:guestGame");
+      }
+    };
+    void persistIfNeeded();
+  }, [isSignedIn, saveGameState]);
+
+  const onSaveGame = async () => {
+    // Store guest game in localStorage, then open Clerk sign-in modal
+    const payload = {
+      board: guestBoard,
+      turn: guestTurn,
+      moves: guestMoves,
+    };
+    localStorage.setItem("ttt:guestGame", JSON.stringify(payload));
+    await openSignIn();
   };
 
   return (
@@ -79,7 +142,7 @@ export const TicTacToe = () => {
         aria-label="Tic Tac Toe board"
         className="grid grid-cols-3 gap-2 max-w-xl mx-auto"
       >
-        {!game ? (
+        {isSignedIn && !game ? (
           <div className="col-span-3 row-span-3 aspect-square rounded-2xl glass shadow-soft text-2xl flex flex-col items-center justify-center gap-2">
             <LoaderCircle className="size-12 animate-spin" />
           </div>
@@ -104,12 +167,33 @@ export const TicTacToe = () => {
         {winner ? `Winner: ${winner}` : `Turn: ${xIsNext ? "X" : "O"}`}
       </p>
       <div className="mt-4 flex gap-2">
-        <button
-          className="rounded-2xl px-4 py-2 bg-primary text-primary-foreground"
-          onClick={() => resetGame()}
-        >
-          Reset
-        </button>
+        {isSignedIn ? (
+          <button
+            className="rounded-2xl px-4 py-2 bg-primary text-primary-foreground"
+            onClick={() => resetGame()}
+          >
+            Reset
+          </button>
+        ) : (
+          <>
+            <button
+              className="rounded-2xl px-4 py-2 bg-primary text-primary-foreground"
+              onClick={() => {
+                setGuestBoard(Array(9).fill(null) as Cell[]);
+                setGuestTurn("X");
+                setGuestMoves([]);
+              }}
+            >
+              Reset
+            </button>
+            <button
+              className="rounded-2xl px-4 py-2 bg-accent text-accent-foreground"
+              onClick={onSaveGame}
+            >
+              Save game
+            </button>
+          </>
+        )}
       </div>
     </GameLayout>
   );

@@ -129,3 +129,42 @@ export const resetGame = mutation({
     return await ctx.db.get(game._id);
   },
 });
+
+export const saveGameState = mutation({
+  args: {
+    board: v.array(v.union(v.literal("X"), v.literal("O"), v.null())),
+    turn: v.union(v.literal("X"), v.literal("O")),
+    moves: v.array(
+      v.object({
+        index: v.number(),
+        player: v.union(v.literal("X"), v.literal("O")),
+      }),
+    ),
+  },
+  handler: async (ctx, { board, turn, moves }) => {
+    const userId = await ensureUserId(ctx);
+
+    const existing = await ctx.db
+      .query("ticTacToeGames")
+      .withIndex("by_user", (q) => q.eq("user", userId))
+      .first();
+
+    const stringBoard = board.map((c) => (c === null ? "" : c));
+
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        gameData: { board: stringBoard, turn },
+        moves,
+      });
+      return await ctx.db.get(existing._id);
+    }
+
+    const docId = await ctx.db.insert("ticTacToeGames", {
+      user: userId,
+      gameId: crypto.randomUUID(),
+      gameData: { board: stringBoard, turn },
+      moves,
+    });
+    return await ctx.db.get(docId);
+  },
+});

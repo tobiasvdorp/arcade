@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Navbar } from "@/components/ui/navbar";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { GuestNameDialog } from "@/components/GuestNameDialog";
 
 type AppShellProps = {
   children: ReactNode;
@@ -33,6 +34,7 @@ export function AppShell({ children }: AppShellProps) {
           </motion.div>
         </AnimatePresence>
       </main>
+      <GuestNameDialog />
       <footer role="contentinfo" className="border-t border-border/60">
         <div className="container py-6 text-sm text-muted-foreground">
           © {new Date().getFullYear()} Mini Game Arcade
