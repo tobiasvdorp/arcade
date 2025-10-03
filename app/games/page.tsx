@@ -92,7 +92,7 @@ export default function GamesPage() {
         <Link href="/leaderboards" className="underline underline-offset-4">
           Leaderboards
         </Link>
-        <span> of </span>
+        <span> or </span>
         <Link href="/profile" className="underline underline-offset-4">
           Profile
         </Link>
