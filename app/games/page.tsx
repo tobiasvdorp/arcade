@@ -10,11 +10,11 @@ const GAMES = [
     available: true,
   },
   {
-    slug: "#",
+    slug: "/games/snake",
     title: "Snake",
-    desc: "Coming soon.",
+    desc: "Guide the serpent and grab the glowing bites.",
     diff: "Medium" as const,
-    available: false,
+    available: true,
   },
   {
     slug: "#",
