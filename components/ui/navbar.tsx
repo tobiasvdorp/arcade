@@ -161,7 +161,9 @@ export const Navbar = ({
               <span className="text-lg font-semibold">{logo.title}</span>
             </Link>
             <div className="flex items-center">
-              <NavigationMenu>
+              <NavigationMenu
+              // value="Games"
+              >
                 <NavigationMenuList>
                   {menu.map((item) => renderMenuItem(item))}
                 </NavigationMenuList>
@@ -276,14 +278,14 @@ export const Navbar = ({
 const renderMenuItem = (item: MenuItem) => {
   if (item.items) {
     return (
-      <NavigationMenuItem key={item.title}>
+      <NavigationMenuItem key={item.title} value={item.title}>
         <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-        <NavigationMenuContent className="bg-background">
+        <NavigationMenuContent className="bg-background border-none">
           <ul className="w-80 p-3">
             {item.items.map((subItem) => (
               <li key={subItem.title}>
                 <Link
-                  className="flex select-none gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted hover:text-accent-foreground"
+                  className="flex select-none gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted hover:text-muted-foreground"
                   href={subItem.url}
                 >
                   {subItem.icon}
@@ -307,7 +309,7 @@ const renderMenuItem = (item: MenuItem) => {
   return (
     <Link
       key={item.title}
-      className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-accent-foreground"
+      className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-muted-foreground"
       href={item.url}
     >
       {item.title}
