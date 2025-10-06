@@ -4,8 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 // @ts-expect-error no declaration file
 import confetti from "canvas-confetti";
 import { GameLayout } from "@/components/game/GameLayout";
-import { ScoreBoard } from "@/components/game/ScoreBoard";
-import { KeyLegend } from "@/components/game/KeyLegend";
 import { useMutation, useQuery } from "convex/react";
 import { useAuth, useClerk } from "@clerk/nextjs";
 import { api } from "@/convex/_generated/api";
@@ -72,17 +70,7 @@ export const TicTacToe = () => {
     });
   }, [winner]);
 
-  const header = (
-    <div className="flex items-center justify-between">
-      <ScoreBoard score={board.filter(Boolean).length} highScore={0} />
-      <KeyLegend
-        items={[
-          { key: "↵", label: "Select" },
-          { key: "R", label: "Reset" },
-        ]}
-      />
-    </div>
-  );
+  const movesCount = board.filter(Boolean).length;
 
   const handleClick = (idx: number) => {
     if (board[idx] || winner) return;
@@ -134,7 +122,19 @@ export const TicTacToe = () => {
   };
 
   return (
-    <GameLayout header={header}>
+    <GameLayout
+      title="Tic Tac Toe"
+      runningDescription={
+        winner ? `Winner: ${winner}` : `Turn: ${xIsNext ? "X" : "O"}`
+      }
+      isGameOver={Boolean(winner)}
+      score={movesCount}
+      highScore={0}
+      legendItems={[
+        { key: "↵", label: "Select" },
+        { key: "R", label: "Reset" },
+      ]}
+    >
       <div
         role="grid"
         aria-label="Tic Tac Toe board"
