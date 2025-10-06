@@ -46,16 +46,16 @@ export default function Home() {
         <h2 className="text-2xl md:text-3xl font-bold mb-4">Arcade</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           <GameCard
-            href="/games/tic-tac-toe"
             title="Tic Tac Toe"
+            href="/games/tic-tac-toe"
             description="Classic. Three in a row."
             difficulty="Easy"
           />
           <GameCard
             title="Snake"
-            description="Coming soon."
+            href="/games/snake"
+            description="Guide the serpent and grab the glowing bites!"
             difficulty="Medium"
-            disabled
           />
           <GameCard
             title="Tetris"
