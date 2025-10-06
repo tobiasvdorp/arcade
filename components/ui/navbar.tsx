@@ -43,8 +43,8 @@ interface MenuItem {
 type NavbarProps = {
   logo?: {
     url: string;
-    src: string;
-    alt: string;
+    src?: string;
+    alt?: string;
     title: string;
   };
   menu?: MenuItem[];
@@ -67,8 +67,8 @@ type NavbarProps = {
 export const Navbar = ({
   logo = {
     url: "/",
-    src: "/",
-    alt: "logo",
+    // src: "/",
+    // alt: "logo",
     title: "Mini Game Arcade",
   },
   menu = [
@@ -155,7 +155,9 @@ export const Navbar = ({
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
             <Link href={logo.url} className="flex items-center gap-2">
-              <Image src={logo.src} alt={logo.alt} width={32} height={32} />
+              {logo.src && logo.alt && (
+                <Image src={logo.src} alt={logo.alt} width={32} height={32} />
+              )}
               <span className="text-lg font-semibold">{logo.title}</span>
             </Link>
             <div className="flex items-center">
@@ -187,13 +189,15 @@ export const Navbar = ({
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             <Link href={logo.url} className="flex items-center gap-2">
-              <Image
-                src={logo.src}
-                className="w-8"
-                alt={logo.alt}
-                width={32}
-                height={32}
-              />
+              {logo.src && logo.alt && (
+                <Image
+                  src={logo.src}
+                  className="w-8"
+                  alt={logo.alt}
+                  width={32}
+                  height={32}
+                />
+              )}
               <span className="text-lg font-semibold">{logo.title}</span>
             </Link>
             <Sheet>
@@ -206,13 +210,15 @@ export const Navbar = ({
                 <SheetHeader>
                   <SheetTitle>
                     <Link href={logo.url} className="flex items-center gap-2">
-                      <Image
-                        src={logo.src}
-                        className="w-8"
-                        alt={logo.alt}
-                        width={32}
-                        height={32}
-                      />
+                      {logo.src && logo.alt && (
+                        <Image
+                          src={logo.src}
+                          className="w-8"
+                          alt={logo.alt}
+                          width={32}
+                          height={32}
+                        />
+                      )}
                       <span className="text-lg font-semibold">
                         {logo.title}
                       </span>
