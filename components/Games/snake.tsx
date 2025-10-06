@@ -373,7 +373,7 @@ function SnakeBoard({
           )}
           {isFood && (
             <span
-              className="absolute size-3 rounded-full bg-accent shadow-[0_0_18px_hsl(var(--accent)/0.55)] animate-pulse"
+              className="absolute size-5 rounded-full bg-accent shadow-[0_0_18px_hsl(var(--accent)/0.55)] animate-pulse"
               aria-hidden="true"
             />
           )}
