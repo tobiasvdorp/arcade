@@ -184,16 +184,27 @@ function SnakeBoard({
         y: head.y + currentDirection.y,
       };
 
-      const outside =
-        nextHead.x < 0 ||
-        nextHead.x >= GRID_SIZE ||
-        nextHead.y < 0 ||
-        nextHead.y >= GRID_SIZE;
+      // Implement wraparound behavior instead of game over
+      const wrappedHead = {
+        x:
+          nextHead.x < 0
+            ? GRID_SIZE - 1
+            : nextHead.x >= GRID_SIZE
+              ? 0
+              : nextHead.x,
+        y:
+          nextHead.y < 0
+            ? GRID_SIZE - 1
+            : nextHead.y >= GRID_SIZE
+              ? 0
+              : nextHead.y,
+      };
+
       const hitsSelf = prev.some(
-        (segment) => segment.x === nextHead.x && segment.y === nextHead.y,
+        (segment) => segment.x === wrappedHead.x && segment.y === wrappedHead.y,
       );
 
-      if (outside || hitsSelf) {
+      if (hitsSelf) {
         setStatus("over");
         setPaused(true);
         announce("Game over. Press restart to try again.");
@@ -201,10 +212,11 @@ function SnakeBoard({
       }
 
       const foodPoint = foodRef.current;
-      const ateFood = nextHead.x === foodPoint.x && nextHead.y === foodPoint.y;
+      const ateFood =
+        wrappedHead.x === foodPoint.x && wrappedHead.y === foodPoint.y;
 
       if (ateFood) {
-        const newSnake = [nextHead, ...prev];
+        const newSnake = [wrappedHead, ...prev];
         setScore((current) => {
           const next = current + 10;
           announce(`Yum! Score ${next}`);
@@ -216,7 +228,7 @@ function SnakeBoard({
         return;
       }
 
-      const newSnake = [nextHead, ...prev];
+      const newSnake = [wrappedHead, ...prev];
       newSnake.pop();
       setSnake(newSnake);
     }, SPEED);
