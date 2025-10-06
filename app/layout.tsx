@@ -5,7 +5,6 @@ import ConvexClientProvider from "@/components/ConvexClientProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { AppShell } from "@/components/AppShell";
-import { NeoArcadeDock } from "@/components/NeoArcadeDock";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +38,6 @@ export default function RootLayout({
           <ThemeProvider>
             <ConvexClientProvider>
               <AppShell>{children}</AppShell>
-              <NeoArcadeDock />
             </ConvexClientProvider>
           </ThemeProvider>
         </ClerkProvider>
