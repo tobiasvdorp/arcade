@@ -18,7 +18,15 @@ const INITIAL_SNAKE: Point[] = [
   { x: 6, y: 9 },
 ];
 const INITIAL_DIRECTION: Direction = { x: 1, y: 0 };
-const SPEED = 140;
+const BASE_SPEED = 140;
+const MIN_SPEED = 50; // Minimum speed when snake is very long
+const SPEED_DECREASE_PER_SEGMENT = 5; // How much faster per segment
+
+// Calculate speed based on snake length
+const calculateSpeed = (snakeLength: number): number => {
+  const speed = BASE_SPEED - (snakeLength - 3) * SPEED_DECREASE_PER_SEGMENT;
+  return Math.max(speed, MIN_SPEED);
+};
 
 const KEY_TO_DIRECTION: Record<string, Direction> = {
   ArrowUp: { x: 0, y: -1 },
@@ -175,7 +183,7 @@ function SnakeBoard({
   useEffect(() => {
     if (status !== "running" || paused) return;
 
-    const tick = window.setInterval(() => {
+    const gameLoop = () => {
       const prev = snakeRef.current;
       const currentDirection = directionRef.current;
       const head = prev[0];
@@ -231,10 +239,26 @@ function SnakeBoard({
       const newSnake = [wrappedHead, ...prev];
       newSnake.pop();
       setSnake(newSnake);
-    }, SPEED);
+    };
+
+    let timeoutId: number;
+
+    const scheduleNextTick = () => {
+      const currentSnakeLength = snakeRef.current.length;
+      const speed = calculateSpeed(currentSnakeLength);
+
+      timeoutId = window.setTimeout(() => {
+        if (status === "running" && !paused) {
+          gameLoop();
+          scheduleNextTick(); // Schedule the next tick
+        }
+      }, speed);
+    };
+
+    scheduleNextTick();
 
     return () => {
-      window.clearInterval(tick);
+      window.clearTimeout(timeoutId);
     };
   }, [
     announce,
