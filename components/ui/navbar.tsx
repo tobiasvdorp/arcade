@@ -80,7 +80,7 @@ export const Navbar = ({
   return (
     <header className="py-4">
       <div className="container">
-        <nav className="hidden justify-between lg:flex">
+        <nav className="hidden justify-between md:flex">
           <div className="flex items-center gap-6">
             <Link href={logo.url} className="flex items-center gap-2">
               {logo.src && logo.alt && (
@@ -114,7 +114,7 @@ export const Navbar = ({
             <ThemeToggle />
           </div>
         </nav>
-        <div className="block lg:hidden">
+        <div className="block md:hidden">
           <div className="flex items-center justify-between">
             <Link href={logo.url} className="flex items-center gap-2">
               {logo.src && logo.alt && (
@@ -262,7 +262,7 @@ const renderMobileMenuItem = (item: MenuItem) => {
           {item.items.map((subItem) => (
             <Link
               key={subItem.title}
-              className="flex select-none gap-4 rounded-md p-3 leading-none outline-none transition-colors hover:bg-muted hover:text-accent-foreground"
+              className="flex select-none gap-4 rounded-md p-3 leading-none outline-none transition-colors hover:bg-muted hover:text-muted-foreground"
               href={subItem.url}
             >
               {subItem.icon && subItem.icon({ width: 24, height: 24 })}
