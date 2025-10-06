@@ -8,6 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
+import { ScoreBoard } from "@/components/game/ScoreBoard";
+import { KeyLegend } from "@/components/game/KeyLegend";
 
 type GameLayoutContextValue = {
   paused: boolean;
@@ -23,12 +25,27 @@ export function useGameLayout() {
   return ctx;
 }
 
+type KeyLegendItem = { key: string; label: string };
+
 type GameLayoutProps = {
-  header: ReactNode;
+  title: string;
+  runningDescription: string;
+  isGameOver?: boolean;
+  score: number;
+  highScore?: number;
+  legendItems: KeyLegendItem[];
   children: ReactNode;
 };
 
-export function GameLayout({ header, children }: GameLayoutProps) {
+export function GameLayout({
+  title,
+  runningDescription,
+  isGameOver,
+  score,
+  highScore,
+  legendItems,
+  children,
+}: GameLayoutProps) {
   const [paused, setPaused] = useState(false);
   const liveRef = useRef<HTMLParagraphElement | null>(null);
 
@@ -51,7 +68,24 @@ export function GameLayout({ header, children }: GameLayoutProps) {
           role="region"
           aria-label="Game header"
         >
-          {header}
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="md:basis-1/3">
+              <ScoreBoard score={score} highScore={highScore} />
+            </div>
+            <div className="flex-1 md:basis-1/3 text-center">
+              <div className="text-sm text-muted-foreground">{title}</div>
+              <div className="text-sm font-medium">
+                {isGameOver
+                  ? "Game over"
+                  : paused
+                    ? "Paused"
+                    : runningDescription}
+              </div>
+            </div>
+            <div className="md:basis-1/3 flex md:justify-end">
+              <KeyLegend items={legendItems} />
+            </div>
+          </div>
         </header>
         <div
           aria-live="polite"

@@ -10,8 +10,6 @@ import {
   useState,
 } from "react";
 import { GameLayout, useGameLayout } from "@/components/game/GameLayout";
-import { ScoreBoard } from "@/components/game/ScoreBoard";
-import { KeyLegend } from "@/components/game/KeyLegend";
 
 const GRID_SIZE = 18;
 const INITIAL_SNAKE: Point[] = [
@@ -89,17 +87,20 @@ export function Snake() {
     setStatus("running");
   }, []);
 
-  const header = (
-    <SnakeHeader
+  return (
+    <GameLayout
+      title="Snake"
+      runningDescription="Collect the glowing bites"
+      isGameOver={status === "over"}
       score={score}
       highScore={highScore}
-      status={status}
-      onReset={resetGame}
-    />
-  );
-
-  return (
-    <GameLayout header={header}>
+      legendItems={[
+        { key: "↑↓←→", label: "Move" },
+        { key: "WASD", label: "Move" },
+        { key: "Space", label: "Pause/Resume" },
+        { key: "R", label: "Restart" },
+      ]}
+    >
       <SnakeBoard
         snake={snake}
         setSnake={setSnake}
@@ -116,65 +117,7 @@ export function Snake() {
   );
 }
 
-type SnakeHeaderProps = {
-  score: number;
-  highScore: number;
-  status: GameStatus;
-  onReset: () => void;
-};
-
-function SnakeHeader({ score, highScore, status, onReset }: SnakeHeaderProps) {
-  const { paused, setPaused, announce } = useGameLayout();
-  const handlePauseToggle = () => {
-    setPaused(!paused);
-    announce(paused ? "Game resumed" : "Game paused");
-  };
-
-  const handleReset = () => {
-    setPaused(false);
-    onReset();
-    announce("Game restarted");
-  };
-
-  return (
-    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-      <ScoreBoard score={score} highScore={highScore} />
-      <div className="flex flex-wrap items-center gap-2">
-        <KeyLegend
-          items={[
-            { key: "↑↓←→", label: "Move" },
-            { key: "WASD", label: "Move" },
-            { key: "Space", label: paused ? "Resume" : "Pause" },
-            { key: "R", label: "Restart" },
-          ]}
-        />
-        <div className="flex gap-2">
-          <button
-            type="button"
-            className="rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-soft"
-            onClick={handlePauseToggle}
-          >
-            {paused ? "Resume" : "Pause"}
-          </button>
-          <button
-            type="button"
-            className="rounded-2xl bg-accent px-4 py-2 text-sm font-medium text-accent-foreground shadow-soft"
-            onClick={handleReset}
-          >
-            Restart
-          </button>
-        </div>
-      </div>
-      <span className="text-sm font-medium text-muted-foreground">
-        {status === "over"
-          ? "Game over"
-          : paused
-            ? "Paused"
-            : "Collect the glowing bites"}
-      </span>
-    </div>
-  );
-}
+// Header UI moved into GameLayout. Keyboard controls remain in board.
 
 type SnakeBoardProps = {
   snake: Point[];
