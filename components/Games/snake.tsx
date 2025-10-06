@@ -205,6 +205,7 @@ function SnakeBoard({
   const boardRef = useRef<HTMLDivElement | null>(null);
   const directionRef = useRef(direction);
   const foodRef = useRef(food);
+  const snakeRef = useRef(snake);
 
   useEffect(() => {
     directionRef.current = direction;
@@ -213,6 +214,10 @@ function SnakeBoard({
   useEffect(() => {
     foodRef.current = food;
   }, [food]);
+
+  useEffect(() => {
+    snakeRef.current = snake;
+  }, [snake]);
 
   useEffect(() => {
     boardRef.current?.focus();
@@ -228,52 +233,64 @@ function SnakeBoard({
     if (status !== "running" || paused) return;
 
     const tick = window.setInterval(() => {
-      setSnake((prev) => {
-        const currentDirection = directionRef.current;
-        const head = prev[0];
-        const nextHead = {
-          x: head.x + currentDirection.x,
-          y: head.y + currentDirection.y,
-        };
+      const prev = snakeRef.current;
+      const currentDirection = directionRef.current;
+      const head = prev[0];
+      const nextHead = {
+        x: head.x + currentDirection.x,
+        y: head.y + currentDirection.y,
+      };
 
-        const outside =
-          nextHead.x < 0 ||
-          nextHead.x >= GRID_SIZE ||
-          nextHead.y < 0 ||
-          nextHead.y >= GRID_SIZE;
-        const hitsSelf = prev.some(
-          (segment) => segment.x === nextHead.x && segment.y === nextHead.y,
-        );
+      const outside =
+        nextHead.x < 0 ||
+        nextHead.x >= GRID_SIZE ||
+        nextHead.y < 0 ||
+        nextHead.y >= GRID_SIZE;
+      const hitsSelf = prev.some(
+        (segment) => segment.x === nextHead.x && segment.y === nextHead.y,
+      );
 
-        if (outside || hitsSelf) {
-          setStatus("over");
-          setPaused(true);
-          announce("Game over. Press restart to try again.");
-          return prev;
-        }
+      if (outside || hitsSelf) {
+        setStatus("over");
+        setPaused(true);
+        announce("Game over. Press restart to try again.");
+        return;
+      }
 
+      const foodPoint = foodRef.current;
+      const ateFood = nextHead.x === foodPoint.x && nextHead.y === foodPoint.y;
+
+      if (ateFood) {
         const newSnake = [nextHead, ...prev];
-        const foodPoint = foodRef.current;
-        if (nextHead.x === foodPoint.x && nextHead.y === foodPoint.y) {
-          setScore((value) => {
-            const nextScore = value + 10;
-            announce(`Yum! Score ${nextScore}`);
-            return nextScore;
-          });
-          const nextFood = randomFood(newSnake);
-          setFood(nextFood);
-          return newSnake;
-        }
+        setScore((current) => {
+          const next = current + 10;
+          announce(`Yum! Score ${next}`);
+          return next;
+        });
+        const nextFood = randomFood(newSnake);
+        setFood(nextFood);
+        setSnake(newSnake);
+        return;
+      }
 
-        newSnake.pop();
-        return newSnake;
-      });
+      const newSnake = [nextHead, ...prev];
+      newSnake.pop();
+      setSnake(newSnake);
     }, SPEED);
 
     return () => {
       window.clearInterval(tick);
     };
-  }, [announce, paused, setFood, setPaused, setScore, setSnake, setStatus, status]);
+  }, [
+    announce,
+    paused,
+    setFood,
+    setPaused,
+    setScore,
+    setSnake,
+    setStatus,
+    status,
+  ]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -303,7 +320,10 @@ function SnakeBoard({
 
       event.preventDefault();
       setDirection((current) => {
-        if (current.x + nextDirection.x === 0 && current.y + nextDirection.y === 0) {
+        if (
+          current.x + nextDirection.x === 0 &&
+          current.y + nextDirection.y === 0
+        ) {
           return current;
         }
         return nextDirection;
@@ -346,7 +366,10 @@ function SnakeBoard({
           }
         >
           {isHead && (
-            <span className="absolute size-2 rounded-full bg-primary-foreground shadow-sm" aria-hidden="true" />
+            <span
+              className="absolute size-2 rounded-full bg-primary-foreground shadow-sm"
+              aria-hidden="true"
+            />
           )}
           {isFood && (
             <span
@@ -369,9 +392,7 @@ function SnakeBoard({
         className="outline-none"
         onKeyDown={handleKeyDown}
       >
-        <div
-          className="mx-auto aspect-square w-full max-w-2xl overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-background via-background/95 to-background/80 p-3 shadow-inner"
-        >
+        <div className="mx-auto aspect-square w-full max-w-2xl overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-background via-background/95 to-background/80 p-3 shadow-inner">
           <div
             className="grid h-full w-full gap-1"
             style={{
