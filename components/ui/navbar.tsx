@@ -1,8 +1,6 @@
 "use client";
 
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
-
-import { JSX } from "react";
+import { LuMenu } from "react-icons/lu";
 
 import {
   Accordion,
@@ -30,15 +28,17 @@ import Link from "next/link";
 import { SignInButton, SignOutButton, SignUpButton } from "@clerk/nextjs";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { UserButton } from "@clerk/nextjs";
+import { GAMES } from "@/lib/data/games";
+import { IconType } from "react-icons/lib";
 import { ThemeToggle } from "./theme-toggle";
 
-interface MenuItem {
+type MenuItem = {
   title: string;
   url: string;
   description?: string;
-  icon?: JSX.Element;
+  icon?: IconType;
   items?: MenuItem[];
-}
+};
 
 type NavbarProps = {
   logo?: {
@@ -48,27 +48,11 @@ type NavbarProps = {
     title: string;
   };
   menu?: MenuItem[];
-  mobileExtraLinks?: {
-    name: string;
-    url: string;
-  }[];
-  // auth?: {
-  //   login: {
-  //     text: string;
-  //     url: string;
-  //   };
-  //   signup: {
-  //     text: string;
-  //     url: string;
-  //   };
-  // };
 };
 
 export const Navbar = ({
   logo = {
     url: "/",
-    // src: "/",
-    // alt: "logo",
     title: "Mini Game Arcade",
   },
   menu = [
@@ -76,63 +60,13 @@ export const Navbar = ({
     {
       title: "Games",
       url: "/games",
-      items: [
-        {
-          title: "Tic Tac Toe",
-          description: "Play Tic Tac Toe",
-          icon: <Book className="size-5 shrink-0" />,
-          url: "/games/tic-tac-toe",
-        },
-        {
-          title: "Snake",
-          description: "Play Snake",
-          icon: <Trees className="size-5 shrink-0" />,
-          url: "/games/snake",
-        },
-        {
-          title: "Pong",
-          description: "Play Pong",
-          icon: <Sunset className="size-5 shrink-0" />,
-          url: "/games/pong",
-        },
-        {
-          title: "Tetris",
-          description: "Play Tetris",
-          icon: <Zap className="size-5 shrink-0" />,
-          url: "/games/tetris",
-        },
-      ],
+      items: GAMES.map((game) => ({
+        title: game.title,
+        description: game.menuDescription,
+        icon: game.icon,
+        url: game.href,
+      })),
     },
-    // {
-    //   title: "Resources",
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Help Center",
-    //       description: "Get all the answers you need right here",
-    //       icon: <Zap className="size-5 shrink-0" />,
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Contact Us",
-    //       description: "We are here to help you with any questions you have",
-    //       icon: <Sunset className="size-5 shrink-0" />,
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Status",
-    //       description: "Check the current status of our services and APIs",
-    //       icon: <Trees className="size-5 shrink-0" />,
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Terms of Service",
-    //       description: "Our terms and conditions for using our services",
-    //       icon: <Book className="size-5 shrink-0" />,
-    //       url: "#",
-    //     },
-    //   ],
-    // },
     {
       title: "Leaderboards",
       url: "/leaderboards",
@@ -141,12 +75,6 @@ export const Navbar = ({
       title: "Profile",
       url: "/profile",
     },
-  ],
-  mobileExtraLinks = [
-    { name: "Press", url: "#" },
-    { name: "Contact", url: "#" },
-    { name: "Imprint", url: "#" },
-    { name: "Sitemap", url: "#" },
   ],
 }: NavbarProps) => {
   return (
@@ -161,9 +89,7 @@ export const Navbar = ({
               <span className="text-lg font-semibold">{logo.title}</span>
             </Link>
             <div className="flex items-center">
-              <NavigationMenu
-              // value="Games"
-              >
+              <NavigationMenu>
                 <NavigationMenuList>
                   {menu.map((item) => renderMenuItem(item))}
                 </NavigationMenuList>
@@ -205,7 +131,7 @@ export const Navbar = ({
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon">
-                  <Menu className="size-4" />
+                  <LuMenu className="size-4" />
                 </Button>
               </SheetTrigger>
               <SheetContent className="overflow-y-auto">
@@ -235,7 +161,7 @@ export const Navbar = ({
                   >
                     {menu.map((item) => renderMobileMenuItem(item))}
                   </Accordion>
-                  <div className="border-t py-4">
+                  {/* <div className="border-t py-4">
                     <div className="grid grid-cols-2 justify-start">
                       {mobileExtraLinks.map((link, idx) => (
                         <Link
@@ -247,7 +173,7 @@ export const Navbar = ({
                         </Link>
                       ))}
                     </div>
-                  </div>
+                  </div> */}
                   <div className="flex flex-col gap-3">
                     <Unauthenticated>
                       <Button asChild variant="outline">
@@ -257,13 +183,16 @@ export const Navbar = ({
                         <SignUpButton mode="modal" />
                       </Button>
                     </Unauthenticated>
+
                     <Authenticated>
-                      <UserButton />
-                      <Button asChild>
-                        <SignOutButton />
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <UserButton />
+                        <Button asChild className="w-full">
+                          <SignOutButton />
+                        </Button>
+                        <ThemeToggle />
+                      </div>
                     </Authenticated>
-                    <ThemeToggle />
                   </div>
                 </div>
               </SheetContent>
@@ -282,24 +211,29 @@ const renderMenuItem = (item: MenuItem) => {
         <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
         <NavigationMenuContent className="bg-background border-none">
           <ul className="w-80 p-3">
-            {item.items.map((subItem) => (
-              <li key={subItem.title}>
-                <Link
-                  className="flex select-none gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted hover:text-muted-foreground"
-                  href={subItem.url}
-                >
-                  {subItem.icon}
-                  <div>
-                    <div className="text-sm font-semibold">{subItem.title}</div>
-                    {subItem.description && (
-                      <p className="text-sm leading-snug text-muted-foreground">
-                        {subItem.description}
-                      </p>
-                    )}
-                  </div>
-                </Link>
-              </li>
-            ))}
+            {item.items.map((subItem) => {
+              const Icon = subItem.icon;
+              return (
+                <li key={subItem.title}>
+                  <Link
+                    className="flex select-none gap-4 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted hover:text-muted-foreground"
+                    href={subItem.url}
+                  >
+                    {Icon && <Icon size={24} className="shrink-0 my-auto" />}
+                    <div>
+                      <div className="text-sm font-semibold">
+                        {subItem.title}
+                      </div>
+                      {subItem.description && (
+                        <p className="text-sm leading-snug text-muted-foreground">
+                          {subItem.description}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </NavigationMenuContent>
       </NavigationMenuItem>
@@ -331,7 +265,7 @@ const renderMobileMenuItem = (item: MenuItem) => {
               className="flex select-none gap-4 rounded-md p-3 leading-none outline-none transition-colors hover:bg-muted hover:text-accent-foreground"
               href={subItem.url}
             >
-              {subItem.icon}
+              {subItem.icon && subItem.icon({ width: 24, height: 24 })}
               <div>
                 <div className="text-sm font-semibold">{subItem.title}</div>
                 {subItem.description && (

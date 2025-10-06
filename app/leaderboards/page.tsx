@@ -3,15 +3,17 @@
 import { Divider } from "@/components/ui/divider";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Virtuoso } from "react-virtuoso";
+import { GAMES } from "@/lib/data/games";
 
 type Item = { rank: number; player: string; score: number; game: string };
 
 function generateMock(count = 200): Item[] {
+  const gameNames = GAMES.map((game) => game.title);
   return Array.from({ length: count }).map((_, i) => ({
     rank: i + 1,
     player: `Player ${i + 1}`,
     score: Math.floor(Math.random() * 10000),
-    game: ["Snake", "Tetris", "Memory", "Pong"][i % 4],
+    game: gameNames[i % gameNames.length],
   }));
 }
 

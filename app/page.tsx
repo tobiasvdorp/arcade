@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { GameCard } from "@/components/GameCard";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { LuArrowRight } from "react-icons/lu";
+import { GAMES } from "@/lib/data/games";
 
 export default function Home() {
   return (
@@ -24,7 +25,7 @@ export default function Home() {
           <div className="mt-8 flex gap-3">
             <Button asChild>
               <Link href="#arcade">
-                Play now <ArrowRight className="size-4 ml-2" />
+                Play now <LuArrowRight className="size-4 ml-2" />
               </Link>
             </Button>
             <Button asChild variant={"secondary"}>
@@ -43,24 +44,9 @@ export default function Home() {
       <div id="arcade" className="container py-10">
         <h2 className="text-2xl md:text-3xl font-bold mb-4">Arcade</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          <GameCard
-            title="Tic Tac Toe"
-            href="/games/tic-tac-toe"
-            description="Classic. Three in a row."
-            difficulty="Easy"
-          />
-          <GameCard
-            title="Snake"
-            href="/games/snake"
-            description="Guide the serpent and grab the glowing bites!"
-            difficulty="Medium"
-          />
-          <GameCard
-            title="Tetris"
-            description="Coming soon."
-            difficulty="Hard"
-            disabled
-          />
+          {GAMES.map((game) => (
+            <GameCard key={game.title} game={game} />
+          ))}
         </div>
       </div>
     </section>

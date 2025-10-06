@@ -1,28 +1,19 @@
 import Link from "next/link";
 import { PixelCanvas } from "./ui/pixel-canvas";
 import { cn } from "@/lib/utils";
+import { type Game } from "@/lib/data/games";
 
 type GameCardProps = {
-  href?: string;
-  title: string;
-  description?: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  disabled?: boolean;
+  game: Game;
 };
 
-export function GameCard({
-  href,
-  title,
-  description,
-  difficulty,
-  disabled,
-}: GameCardProps) {
+export function GameCard({ game }: GameCardProps) {
   const baseClasses = cn(
     "group rounded-2xl border glass shadow-soft p-4 transition-[transform,box-shadow] duration-200 ease-out h-40",
     {
-      "opacity-70 cursor-not-allowed": disabled,
+      "opacity-70 cursor-not-allowed": !game.available,
       "hover:glow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring":
-        !disabled,
+        game.available,
     },
   );
 
@@ -30,23 +21,23 @@ export function GameCard({
     <>
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold group-hover:text-4xl group-hover:font-bold transition-all duration-200 ease-out">
-          {title}
+          {game.title}
         </h3>
         <span className="text-xs rounded-full px-2 py-1 bg-accent/18 self-start">
-          {difficulty}
+          {game.difficulty}
         </span>
       </div>
-      {description && (
-        <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+      {game.description && (
+        <p className="mt-2 text-sm text-muted-foreground">{game.description}</p>
       )}
     </>
   );
 
-  if (href && !disabled) {
+  if (game.available) {
     return (
       <>
         <Link
-          href={href}
+          href={game.href}
           className={cn("inline-block overflow-hidden group", baseClasses)}
           style={
             { "--active-color": "hsl(var(--accent))" } as React.CSSProperties
@@ -65,7 +56,7 @@ export function GameCard({
   }
 
   return (
-    <div className={baseClasses} aria-disabled={disabled || undefined}>
+    <div className={baseClasses} aria-disabled={!game.available || undefined}>
       {content}
     </div>
   );

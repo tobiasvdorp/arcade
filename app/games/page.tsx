@@ -1,43 +1,6 @@
 import Link from "next/link";
 import { GameCard } from "@/components/GameCard";
-
-const GAMES = [
-  {
-    slug: "/games/tic-tac-toe",
-    title: "Tic Tac Toe",
-    desc: "Three in a row.",
-    diff: "Easy" as const,
-    available: true,
-  },
-  {
-    slug: "/games/snake",
-    title: "Snake",
-    desc: "Guide the serpent and grab the glowing bites.",
-    diff: "Medium" as const,
-    available: true,
-  },
-  {
-    slug: "#",
-    title: "Tetris",
-    desc: "Coming soon.",
-    diff: "Hard" as const,
-    available: false,
-  },
-  {
-    slug: "#",
-    title: "Memory",
-    desc: "Coming soon.",
-    diff: "Medium" as const,
-    available: false,
-  },
-  {
-    slug: "#",
-    title: "Pong",
-    desc: "Coming soon.",
-    diff: "Medium" as const,
-    available: false,
-  },
-];
+import { GAMES } from "@/lib/data/games";
 
 export default function GamesPage() {
   return (
@@ -75,15 +38,8 @@ export default function GamesPage() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {GAMES.map((g) => (
-          <GameCard
-            key={g.title}
-            href={g.available ? g.slug : undefined}
-            title={g.title}
-            description={g.desc}
-            difficulty={g.diff}
-            disabled={!g.available}
-          />
+        {GAMES.map((game) => (
+          <GameCard key={game.title} game={game} />
         ))}
       </div>
 

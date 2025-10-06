@@ -8,7 +8,7 @@ import { useMutation, useQuery } from "convex/react";
 import { useAuth, useClerk } from "@clerk/nextjs";
 import { api } from "@/convex/_generated/api";
 import { type Cell, calculateWinner } from "@/convex/shared/ticTacToe";
-import { LoaderCircle } from "lucide-react";
+import { LuLoaderCircle } from "react-icons/lu";
 
 export const TicTacToe = () => {
   const { isSignedIn } = useAuth();
@@ -142,7 +142,7 @@ export const TicTacToe = () => {
       >
         {isSignedIn && !game ? (
           <div className="col-span-3 row-span-3 aspect-square rounded-2xl glass shadow-soft text-2xl flex flex-col items-center justify-center gap-2">
-            <LoaderCircle className="size-12 animate-spin" />
+            <LuLoaderCircle className="size-12 animate-spin" />
           </div>
         ) : (
           board.map((cell, i) => (
