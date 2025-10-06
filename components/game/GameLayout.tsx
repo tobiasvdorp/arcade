@@ -73,8 +73,10 @@ export function GameLayout({
               <ScoreBoard score={score} highScore={highScore} />
             </div>
             <div className="flex-1 md:basis-1/3 text-center">
-              <div className="text-sm text-muted-foreground">{title}</div>
-              <div className="text-sm font-medium">
+              <div className="sm:text-2xl md:text-4xl font-extrabold text-foreground">
+                {title}
+              </div>
+              <div className="text-sm font-medium text-muted-foreground">
                 {isGameOver
                   ? "Game over"
                   : paused
