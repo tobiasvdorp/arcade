@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { GameCard } from "@/components/GameCard";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export default function Home() {
   return (
@@ -20,18 +22,14 @@ export default function Home() {
             neon glow accents and glass UI.
           </p>
           <div className="mt-8 flex gap-3">
-            <Link
-              href="#arcade"
-              className="inline-flex items-center rounded-2xl px-5 py-3 bg-primary text-primary-foreground shadow-soft hover:glow transition-[transform,box-shadow] duration-200 ease-out hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]"
-            >
-              Play now
-            </Link>
-            <Link
-              href="/leaderboards"
-              className="inline-flex items-center rounded-2xl px-5 py-3 bg-accent/20 text-foreground shadow-sm hover:bg-accent/30 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--ring))]"
-            >
-              Leaderboards
-            </Link>
+            <Button asChild>
+              <Link href="#arcade">
+                Play now <ArrowRight className="size-4 ml-2" />
+              </Link>
+            </Button>
+            <Button asChild variant={"secondary"}>
+              <Link href="/leaderboards">Leaderboards </Link>
+            </Button>
           </div>
         </div>
         <div
