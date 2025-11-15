@@ -189,16 +189,25 @@ function createPixelCanvasElement() {
         });
         ro.observe(this);
         this._resizeObserver = ro;
+
+        // Auto-start animation if data-auto-start is set
+        if (this.hasAttribute("data-auto-start")) {
+          setTimeout(() => this.handleAnimation("appear"), 100);
+        }
       });
 
-      this._parent?.addEventListener("mouseenter", () =>
-        this.handleAnimation("appear"),
-      );
-      this._parent?.addEventListener("mouseleave", () =>
-        this.handleAnimation("disappear"),
-      );
+      // Only add hover events if autoStart is not enabled
+      if (!this.hasAttribute("data-auto-start")) {
+        this._parent?.addEventListener("mouseenter", () =>
+          this.handleAnimation("appear"),
+        );
+        this._parent?.addEventListener("mouseleave", () =>
+          this.handleAnimation("disappear"),
+        );
+      }
 
-      if (!this.noFocus) {
+      // Only add focus events if autoStart is not enabled
+      if (!this.noFocus && !this.hasAttribute("data-auto-start")) {
         this._parent?.addEventListener(
           "focus",
           () => this.handleAnimation("appear"),
@@ -216,14 +225,18 @@ function createPixelCanvasElement() {
       this._initialized = false;
       this._resizeObserver?.disconnect();
 
-      this._parent?.removeEventListener("mouseenter", () =>
-        this.handleAnimation("appear"),
-      );
-      this._parent?.removeEventListener("mouseleave", () =>
-        this.handleAnimation("disappear"),
-      );
+      // Only remove hover events if they were added (i.e., autoStart was not enabled)
+      if (!this.hasAttribute("data-auto-start")) {
+        this._parent?.removeEventListener("mouseenter", () =>
+          this.handleAnimation("appear"),
+        );
+        this._parent?.removeEventListener("mouseleave", () =>
+          this.handleAnimation("disappear"),
+        );
+      }
 
-      if (!this.noFocus) {
+      // Only remove focus events if they were added (i.e., autoStart was not enabled)
+      if (!this.noFocus && !this.hasAttribute("data-auto-start")) {
         this._parent?.removeEventListener("focus", () =>
           this.handleAnimation("appear"),
         );
@@ -301,6 +314,9 @@ function createPixelCanvasElement() {
         cancelAnimationFrame(this.animation);
       }
 
+      const isAutoStart = this.hasAttribute("data-auto-start");
+      const shouldKeepRunning = isAutoStart && name === "appear";
+
       const animate = () => {
         this.animation = requestAnimationFrame(animate);
 
@@ -320,7 +336,8 @@ function createPixelCanvasElement() {
           if (!pixel.isIdle) allIdle = false;
         }
 
-        if (allIdle) {
+        // Don't stop animation if autoStart is enabled and we're in appear mode
+        if (allIdle && !shouldKeepRunning) {
           cancelAnimationFrame(this.animation);
           this.animation = null;
         }
@@ -337,6 +354,7 @@ export interface PixelCanvasProps extends React.HTMLAttributes<HTMLDivElement> {
   colors?: string[];
   variant?: "default" | "icon";
   noFocus?: boolean;
+  autoStart?: boolean;
 }
 
 declare module "react" {
@@ -352,7 +370,10 @@ declare module "react" {
 }
 
 const PixelCanvas = React.forwardRef<HTMLDivElement, PixelCanvasProps>(
-  ({ gap, speed, colors, variant, noFocus, style, ...props }, ref) => {
+  (
+    { gap, speed, colors, variant, noFocus, autoStart, style, ...props },
+    ref,
+  ) => {
     React.useEffect(() => {
       if (typeof window !== "undefined") {
         if (!customElements.get("pixel-canvas")) {
@@ -370,6 +391,7 @@ const PixelCanvas = React.forwardRef<HTMLDivElement, PixelCanvasProps>(
         data-colors={colors?.join(",")}
         data-variant={variant}
         {...(noFocus && { "data-no-focus": "" })}
+        {...(autoStart && { "data-auto-start": "" })}
         style={{
           position: "absolute",
           inset: 0,
