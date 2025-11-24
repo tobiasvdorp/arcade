@@ -43,8 +43,8 @@ Currently available games:
 1.  **Clone the repository:**
 
     ```bash
-    git clone <your-repo-url>
-    cd template-nextjs-clerk
+    git clone https://github.com/tobiasvdorp/arcade.git
+    cd arcade
     ```
 
 2.  **Install dependencies:**
