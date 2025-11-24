@@ -1,94 +1,93 @@
-# Mini Game Arcade – Design System & Pages
+# Mini Game Arcade
 
-This project implements a modern, playful "Mini Game Arcade" with retro neon accents and clean glasmorphism, built with Next.js App Router, TypeScript, Tailwind v4 design tokens, shadcn/ui (Radix), framer-motion, and accessible WCAG AA patterns.
+A modern, playful collection of browser-based mini-games built with Next.js.
 
-## Styleguide (Tokens)
+> **Note:** This is a hobby project created to explore, learn, and experiment with **Convex** (for the backend/database) and **Clerk** (for authentication).
 
-- Colors: electric blue (primary), neon purple (accent), accent yellow, neutral grays
-- Shapes: rounded-2xl (`--radius: 1rem`), glass backgrounds, layered shadows
-- Motion: 150–220ms route fades/slides; hover scale 1.02; respects reduced motion
-- Focus: visible focus with outline and offset; not color-only
+## Games
 
-See `app/globals.css` for tokens: `--primary`, `--accent`, `--accent-2`, `--glass-*`, shadows, motion, and dark mode parity.
+Currently available games:
 
-## Components
+- **Tic Tac Toe**: Classic game. Play against a friend.
+- **Snake**: Guide the serpent, eat apples, and avoid collisions.
+- **Pong**: _Coming Soon_
+- **Tetris**: _Coming Soon_
 
-- AppShell (`components/AppShell.tsx`): semantic header/main/footer, route transitions
-- ThemeProvider/ThemeToggle (`components/ui`) with `next-themes`
-- NeoArcadeDock (`components/NeoArcadeDock.tsx`): bottom dock with Radix Tabs
-- GameCard (`components/GameCard.tsx`): arcade grid cards with difficulty badges
-- GameLayout/ScoreBoard/KeyLegend (`components/game/*`): accessible game wrapper
-- A11y utilities: FocusRing, EmptyState, Skeleton, AchievementBadge
-- Leaderboards: virtualized list with Radix Tabs
-- Pages: `/leaderboards`, `/profile`, `/settings`, `/games/[slug]`
+## Features
 
-## Accessibility
+- **Real-time Backend**: Powered by [Convex](https://convex.dev/), enabling real-time game updates and leaderboards.
+- **Authentication**: Secure user management with [Clerk](https://clerk.com/).
+- **Modern UI**: "Glassmorphism" design with neon accents, built using Tailwind CSS v4 and shadcn/ui.
+- **Animations**: Smooth transitions and interactions using Framer Motion.
+- **Accessible**: Designed with accessibility in mind (ARIA landmarks, keyboard navigation).
 
-- Landmarks: header/nav/main/footer; headings hierarchy
-- Focus-visible outlines with offset; keyboard and touch support
-- `aria-live` for game status; alt text; reduced-motion toggle in Settings
-- Layout tested to 200% zoom
+## Tech stack
 
-## Animations
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Language**: TypeScript
+- **Database / Backend**: [Convex](https://convex.dev/)
+- **Auth**: [Clerk](https://clerk.com/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Components**: [shadcn/ui](https://ui.shadcn.com/)
+- **Motion**: [Framer Motion](https://www.framer.com/motion/)
 
-- Route transitions via framer-motion (`AppShell`)
-- Hover glow pulse and layered shadows
-- Confetti on achievements/wins (disabled with reduced motion)
+## Getting started
 
-## Development
+### Prerequisites
 
-pnpm dev
+- Node.js
+- npm or pnpm
 
-Then open `http://localhost:3000`. Auth is managed by Clerk (unchanged).
+### Installation
 
-# Welcome to your Convex + Next.js + Clerk app
+1.  **Clone the repository:**
 
-This is a [Convex](https://convex.dev/) project created with [`npm create convex`](https://www.npmjs.com/package/create-convex).
+    ```bash
+    git clone <your-repo-url>
+    cd template-nextjs-clerk
+    ```
 
-After the initial setup (<2 minutes) you'll have a working full-stack app using:
+2.  **Install dependencies:**
 
-- Convex as your backend (database, server logic)
-- [React](https://react.dev/) as your frontend (web page interactivity)
-- [Next.js](https://nextjs.org/) for optimized web hosting and page routing
-- [Tailwind](https://tailwindcss.com/) for building great looking accessible UI
-- [Clerk](https://clerk.com/) for authentication
+    ```bash
+    npm install
+    # or
+    pnpm install
+    ```
 
-## Get started
+3.  **Setup environment variables:**
+    Copy the example environment file and fill in your Clerk keys:
 
-If you just cloned this codebase and didn't use `npm create convex`, run:
+    ```bash
+    cp .env.example .env.local
+    ```
 
-```
-npm install
-npm run dev
-```
+4.  **Setup Convex:**
+    Initialize your Convex backend:
 
-If you're reading this README on GitHub and want to use this template, run:
+    ```bash
+    npx convex dev
+    ```
 
-```
-npm create convex@latest -- -t nextjs-clerk
-```
+    This command will prompt you to log in and configure the project.
 
-Then:
+5.  **Configure authentication:**
+    - In your **Convex Dashboard**, go to `Settings` > `Environment Variables`.
+    - Add `CLERK_JWT_ISSUER_DOMAIN` with your Clerk Issuer URL (found in Clerk Dashboard > JWT Templates).
+    - Ensure your `convex/auth.config.ts` is configured to use this variable.
 
-1. Open your app. There should be a "Claim your application" button from Clerk in the bottom right of your app.
-2. Follow the steps to claim your application and link it to this app.
-3. Follow step 3 in the [Convex Clerk onboarding guide](https://docs.convex.dev/auth/clerk#get-started) to create a Convex JWT template.
-4. Uncomment the Clerk provider in `convex/auth.config.ts`
-5. Paste the Issuer URL as `CLERK_JWT_ISSUER_DOMAIN` to your dev deployment environment variable settings on the Convex dashboard (see [docs](https://docs.convex.dev/auth/clerk#configuring-dev-and-prod-instances))
+6.  **Run the app:**
 
-If you want to sync Clerk user data via webhooks, check out this [example repo](https://github.com/thomasballinger/convex-clerk-users-table/).
+    ```bash
+    npm run dev
+    ```
 
-## Learn more
+    Open [http://localhost:3000](http://localhost:3000) to play!
 
-To learn more about developing your project with Convex, check out:
+## Contributing
 
-- The [Tour of Convex](https://docs.convex.dev/get-started) for a thorough introduction to Convex principles.
-- The rest of [Convex docs](https://docs.convex.dev/) to learn about all Convex features.
-- [Stack](https://stack.convex.dev/) for in-depth articles on advanced topics.
+Since this is a learning project, contributions are welcome if you'd like to suggest improvements or fix bugs!
 
-## Join the community
+## License
 
-Join thousands of developers building full-stack apps with Convex:
-
-- Join the [Convex Discord community](https://convex.dev/community) to get help in real-time.
-- Follow [Convex on GitHub](https://github.com/get-convex/), star and contribute to the open-source implementation of Convex.
+This project is open source.
